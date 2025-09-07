@@ -14,7 +14,7 @@ namespace AutoShare
     {
         private List<(string Texto, string Comando)> pagamentos;
         private readonly NotifyIcon TrayIcon;
-        public FormLootSplit(List<string> pagamentosLista,NotifyIcon trayIcon)
+        public FormLootSplit(List<string> pagamentosLista, NotifyIcon trayIcon)
         {
             TrayIcon = trayIcon;
             InitializeComponent();
@@ -28,21 +28,16 @@ namespace AutoShare
         {
             var trayMenu = new ContextMenuStrip();
 
-            Divisao.Dock = DockStyle.Top;
-            Divisao.AutoGenerateColumns = false;
-            Divisao.AllowUserToAddRows = false;
-            Divisao.ReadOnly = true;
-
             Divisao.Columns.Add(new DataGridViewTextBoxColumn
             {
                 HeaderText = "Pagamento",
                 DataPropertyName = "Texto",
-                Width = 400
+                Width = 290
             });
 
             Divisao.Columns.Add(new DataGridViewButtonColumn
             {
-                HeaderText = "Ação",
+                HeaderText = "Copiar",
                 Text = "Copiar",
                 UseColumnTextForButtonValue = true
             });
