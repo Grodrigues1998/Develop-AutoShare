@@ -1,4 +1,6 @@
-﻿namespace AutoShare
+﻿using System.Windows.Forms;
+
+namespace AutoShare
 {
     partial class FormLootSplit
     {
@@ -28,14 +30,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLootSplit));
             Divisao = new DataGridView();
             Data = new Label();
             Menu = new Panel();
-            estatisticas = new Button();
+            Estatisticas = new Button();
             Split = new Button();
             Historico = new Button();
-            BtnMenu = new Button();
             Body = new Panel();
             panel2 = new Panel();
             panel1 = new Panel();
@@ -51,14 +55,38 @@
             // 
             Divisao.AllowUserToAddRows = false;
             Divisao.AllowUserToDeleteRows = false;
-            Divisao.BackgroundColor = SystemColors.Control;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(249, 250, 251);
+            Divisao.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            Divisao.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            Divisao.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            Divisao.BackgroundColor = Color.FromArgb(244, 246, 248);
             Divisao.BorderStyle = BorderStyle.None;
+            Divisao.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            Divisao.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(225, 228, 232);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = Color.FromArgb(47, 59, 82);
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            Divisao.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             Divisao.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = Color.White;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = Color.FromArgb(51, 51, 51);
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(214, 228, 255);
+            dataGridViewCellStyle3.SelectionForeColor = Color.FromArgb(47, 59, 82);
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            Divisao.DefaultCellStyle = dataGridViewCellStyle3;
             Divisao.Dock = DockStyle.Fill;
+            Divisao.EnableHeadersVisualStyles = false;
             Divisao.Location = new Point(0, 0);
             Divisao.Margin = new Padding(0);
             Divisao.Name = "Divisao";
             Divisao.ReadOnly = true;
+            Divisao.RowHeadersVisible = false;
             Divisao.Size = new Size(483, 319);
             Divisao.TabIndex = 0;
             // 
@@ -73,10 +101,10 @@
             // 
             // Menu
             // 
-            Menu.Controls.Add(estatisticas);
+            Menu.BackColor = Color.FromArgb(47, 59, 82);
+            Menu.Controls.Add(Estatisticas);
             Menu.Controls.Add(Split);
             Menu.Controls.Add(Historico);
-            Menu.Controls.Add(BtnMenu);
             Menu.Dock = DockStyle.Left;
             Menu.Location = new Point(0, 0);
             Menu.Margin = new Padding(0);
@@ -84,53 +112,62 @@
             Menu.Size = new Size(100, 361);
             Menu.TabIndex = 2;
             // 
-            // estatisticas
+            // Estatisticas
             // 
-            estatisticas.FlatAppearance.BorderSize = 0;
-            estatisticas.FlatStyle = FlatStyle.Flat;
-            estatisticas.Location = new Point(0, 150);
-            estatisticas.Margin = new Padding(0);
-            estatisticas.Name = "estatisticas";
-            estatisticas.Size = new Size(100, 50);
-            estatisticas.TabIndex = 0;
-            estatisticas.Text = "Estatistica";
-            estatisticas.UseVisualStyleBackColor = true;
+            Estatisticas.BackColor = Color.FromArgb(47, 59, 82);
+            Estatisticas.FlatAppearance.BorderSize = 0;
+            Estatisticas.FlatAppearance.MouseOverBackColor = Color.FromArgb(62, 74, 99);
+            Estatisticas.FlatStyle = FlatStyle.Flat;
+            Estatisticas.ForeColor = Color.White;
+            Estatisticas.Location = new Point(0, 100);
+            Estatisticas.Margin = new Padding(0);
+            Estatisticas.Name = "Estatisticas";
+            Estatisticas.Size = new Size(100, 50);
+            Estatisticas.TabIndex = 0;
+            Estatisticas.Text = "Estatistica";
+            Estatisticas.UseVisualStyleBackColor = false;
+            Estatisticas.TextImageRelation = TextImageRelation.ImageBeforeText; // imagem antes do texto
+            Estatisticas.ImageAlign = ContentAlignment.MiddleLeft;  // alinhamento da imagem
+            Estatisticas.TextAlign = ContentAlignment.MiddleRight;  // alinhamento do texto
+            Estatisticas.Image = Image.FromFile(Path.Combine(Application.StartupPath, "img", "Estatistica.png"));
             // 
             // Split
             // 
+            Split.BackColor = Color.FromArgb(47, 59, 82);
             Split.FlatAppearance.BorderSize = 0;
+            Split.FlatAppearance.MouseOverBackColor = Color.FromArgb(62, 74, 99);
             Split.FlatStyle = FlatStyle.Flat;
-            Split.Location = new Point(0, 100);
+            Split.ForeColor = Color.White;
+            Split.Location = new Point(0, 50);
             Split.Margin = new Padding(0);
             Split.Name = "Split";
             Split.Size = new Size(100, 50);
             Split.TabIndex = 0;
             Split.Text = "Split";
-            Split.UseVisualStyleBackColor = true;
+            Split.UseVisualStyleBackColor = false;
+            Split.TextImageRelation = TextImageRelation.ImageBeforeText; // imagem antes do texto
+            Split.ImageAlign = ContentAlignment.MiddleLeft;  // alinhamento da imagem
+            Split.TextAlign = ContentAlignment.MiddleRight;  // alinhamento do texto
+            Split.Image=Image.FromFile(Path.Combine(Application.StartupPath, "img", "Split.png"));
             // 
             // Historico
             // 
+            Historico.BackColor = Color.FromArgb(47, 59, 82);
             Historico.FlatAppearance.BorderSize = 0;
+            Historico.FlatAppearance.MouseOverBackColor = Color.FromArgb(62, 74, 99);
             Historico.FlatStyle = FlatStyle.Flat;
-            Historico.Location = new Point(0, 50);
+            Historico.ForeColor = Color.White;
+            Historico.Location = new Point(0, 0);
             Historico.Margin = new Padding(0);
             Historico.Name = "Historico";
             Historico.Size = new Size(100, 50);
             Historico.TabIndex = 0;
             Historico.Text = "Histórico";
-            Historico.UseVisualStyleBackColor = true;
-            // 
-            // BtnMenu
-            // 
-            BtnMenu.FlatAppearance.BorderSize = 0;
-            BtnMenu.FlatStyle = FlatStyle.Flat;
-            BtnMenu.Location = new Point(0, 0);
-            BtnMenu.Margin = new Padding(0);
-            BtnMenu.Name = "BtnMenu";
-            BtnMenu.Size = new Size(100, 50);
-            BtnMenu.TabIndex = 0;
-            BtnMenu.Text = "Menu";
-            BtnMenu.UseVisualStyleBackColor = true;
+            Historico.UseVisualStyleBackColor = false;
+            Historico.TextImageRelation = TextImageRelation.ImageBeforeText; // imagem antes do texto
+            Historico.ImageAlign = ContentAlignment.MiddleLeft;  // alinhamento da imagem
+            Historico.TextAlign = ContentAlignment.MiddleRight;  // alinhamento do texto
+            Historico.Image= Image.FromFile(Path.Combine(Application.StartupPath, "img", "Historico.png"));
             // 
             // Body
             // 
@@ -153,6 +190,7 @@
             // 
             // panel1
             // 
+            panel1.BackColor = Color.FromArgb(244, 246, 248);
             panel1.Controls.Add(Total);
             panel1.Controls.Add(Data);
             panel1.Dock = DockStyle.Top;
@@ -200,9 +238,8 @@
         private Panel panel1;
         private Button Split;
         private Button Historico;
-        private Button BtnMenu;
         private Panel panel2;
-        private Button estatisticas;
+        private Button Estatisticas;
         private Label Total;
     }
 }

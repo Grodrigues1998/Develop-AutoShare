@@ -25,7 +25,7 @@ namespace AutoShareTray
             pastaPartyHunt = Path.Combine(pastaDestino, "Historico Party Analyzer");
 
             // Verifica atualizações
-            UpdateService.CheckForUpdates(Application.ProductVersion);
+            UpdateService.CheckForUpdates(Application.ProductVersion.Split("+")[0]);
 
             // Configura menu da bandeja
             var trayMenu = new ContextMenuStrip();

@@ -30,16 +30,17 @@ namespace AutoShare
 
             Divisao.Columns.Add(new DataGridViewTextBoxColumn
             {
-                HeaderText = "Pagamento",
+                HeaderText = "Pagar",
                 DataPropertyName = "Texto",
-                Width = 290
+
             });
 
-            Divisao.Columns.Add(new DataGridViewButtonColumn
+            Divisao.Columns.Add(new DataGridViewImageColumn
             {
                 HeaderText = "Copiar",
-                Text = "Copiar",
-                UseColumnTextForButtonValue = true
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                Width = 70,
+                Image = Image.FromFile(Path.Combine(Application.StartupPath, "img", "Copiar.png"))
             });
 
             // Bind dos dados
@@ -48,11 +49,11 @@ namespace AutoShare
             // Evento de clique no botão
             Divisao.CellClick += (s, e) =>
             {
-                if (e.RowIndex >= 0 && e.ColumnIndex == 1)
+                if (e.ColumnIndex == 0)
                 {
                     var comando = pagamentos[e.RowIndex].Comando;
                     Clipboard.SetText(comando);
-                    TrayIcon.ShowBalloonTip(1000, "Transfer copiada", $"Transfer '{comando}' copiado para a área de transferência!", ToolTipIcon.Info);
+                    TrayIcon.ShowBalloonTip(1000, "Transfer copiada", $"Transfer copiado para a área de transferência!", ToolTipIcon.Info);
                 }
             };
         }
