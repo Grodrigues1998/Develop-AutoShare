@@ -34,8 +34,5 @@ namespace AutoShare.Services
             clipboard.ClearClipboard();
             trayIcon.ShowBalloonTip(1000, "Hunt Analyzer processado", "Adicionado ao historico!", ToolTipIcon.Info);
         }
-
-        private string GetValor(List<string> linhas, string chave) =>
-            linhas.First(x => x.Contains(chave)).Split(":")[1].Replace(",", "").Trim();
     }
 }

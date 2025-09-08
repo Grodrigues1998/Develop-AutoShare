@@ -81,7 +81,7 @@ namespace AutoShareTray
         {
             var arquivo = new DirectoryInfo(pastaPartyHunt)
                 .GetFiles("*.txt")
-                .OrderByDescending(f => f.CreationTime)
+                .OrderBy(f => f.CreationTime)
                 .ToList();
 
             if (PartyHuntService.UltimosPagamentos != null && PartyHuntService.UltimosPagamentos.Count > 0)
@@ -91,8 +91,11 @@ namespace AutoShareTray
             }
             else if (arquivo.Count > 0)
             {
-                var ultimoparty = arquivo.Last();
-                var formPagamentos = new FormLootSplit(JsonSerializer.Deserialize<List<string>>(File.ReadAllText(ultimoparty.FullName)), trayIcon);
+                var service = new PartyHuntService(pastaPartyHunt, trayIcon, clipboardService);
+                var ultimoparty = arquivo.First();
+                var (players, data) = service.ParsePlayers(File.ReadAllText(ultimoparty.FullName));
+                var pagamentos = service.SplitLoot(players);
+                var formPagamentos = new FormLootSplit(pagamentos, trayIcon);
                 formPagamentos.Show();
             }
             else

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using AutoShare.Models;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows.Forms;
-using AutoShare.Models;
 
 namespace AutoShare.Services
 {
@@ -24,13 +25,15 @@ namespace AutoShare.Services
 
         public void Process(string texto)
         {
-            var players = ParsePlayers(texto);
+            var (players, data) = ParsePlayers(texto);
             FileService.EnsureDirectoryExists(pastaDestino);
             SplitLoot(players);
-            SaveHistory(players);
+            clipboard.ClearClipboard();
+            trayIcon.ShowBalloonTip(5000, "Loot repartido", "Clique aqui para obter mais detalhes!", ToolTipIcon.Info);
+            SaveHistory(texto, data);
         }
 
-        private List<Player> ParsePlayers(string texto)
+        public (List<Player>, DateTime) ParsePlayers(string texto)
         {
             var players = new List<Player>();
             var linhas = texto.Split("\r").Select(x => x.Trim()).ToList();
@@ -38,7 +41,7 @@ namespace AutoShare.Services
 
             string nome = "";
             int loot = 0, sup = 0;
-
+            DateTime data = ConverterParaDateTime(linhas.First().Split("From ")[1].Split(" to ")[0]);
             foreach (var linha in linhas.Skip(index + 1))
             {
                 if (!linha.Contains(":"))
@@ -53,17 +56,23 @@ namespace AutoShare.Services
                     players.Add(new Player { Nome = nome, Loot = loot, Supplies = sup });
                 }
             }
-            return players;
+            return (players, data);
         }
+        public static DateTime ConverterParaDateTime(string dataTexto)
+        {
+            // Define o formato da data
+            string formato = "yyyy-MM-dd, HH:mm:ss";
 
-        private void SaveHistory(List<Player> players)
+            // Faz o parse exato
+            return DateTime.ParseExact(dataTexto, formato, CultureInfo.InvariantCulture);
+        }
+        private void SaveHistory(string texto,DateTime data)
         {
             string caminhoArquivo = Path.Combine(pastaDestino, "PartyHunt");
-            File.WriteAllText(caminhoArquivo + " " + DateTime.Now.ToString("dd-MM-yyyyThh-mm-ss") + ".txt",
-                JsonSerializer.Serialize(UltimosPagamentos));
+            File.WriteAllText(caminhoArquivo + "-" + data.ToString("dd-MM-yyyyThh-mm-ss") + ".txt", texto);
         }
 
-        private void SplitLoot(List<Player> players)
+        public List<string> SplitLoot(List<Player> players)
         {
             long totalLoot = players.Sum(p => p.Loot);
             long totalSupplies = players.Sum(p => p.Supplies);
@@ -99,9 +108,8 @@ namespace AutoShare.Services
                     if (receivers[idxReceiver].Amount == 0) idxReceiver++;
                 }
             }
-            UltimosPagamentos = pagamentos;
-            clipboard.ClearClipboard();
-            trayIcon.ShowBalloonTip(5000, "Loot repartido", "Clique aqui para obter mais detalhes!", ToolTipIcon.Info);
+            UltimosPagamentos = pagamentos;            
+            return pagamentos;
         }
     }
 }
