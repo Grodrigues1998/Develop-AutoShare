@@ -51,10 +51,14 @@ namespace AutoShare.Services
         {
             for (int i = 0; i < release.Length; i++)
             {
-                if (int.Parse(release[i]) > int.Parse(currentVersion[i]))
-                {
+                int prim = int.Parse(release[i]);
+                int sec = int.Parse(currentVersion[i]);
+                if (prim == sec)
+                    continue;
+                if (prim > sec)
                     return true;
-                }
+                if (prim < sec)
+                    return false;
             }
             return false;
         }
