@@ -14,7 +14,7 @@ namespace AutoShare.Services
             DefaultRequestHeaders = { { "User-Agent", "AutoShareApp" } }
         };
 
-        public static async Task CheckForUpdatesAsync(string currentVersion)
+        public static void CheckForUpdatesAsync(string currentVersion)
         {
             try
             {

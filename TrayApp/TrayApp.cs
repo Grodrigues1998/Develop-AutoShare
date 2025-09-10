@@ -13,7 +13,7 @@ namespace AutoShareTray
         public TrayApp()
         {
 
-            UpdateService.CheckForUpdatesAsync(Application.ProductVersion.Split("+")[0]).Wait();
+            UpdateService.CheckForUpdatesAsync(Application.ProductVersion.Split("+")[0]);
 
             TrayAppService.TrayIcon.ShowBalloonTip(1000, "AutoShare iniciado", "Monitorando área de transferência.", ToolTipIcon.Info);
 
