@@ -9,20 +9,24 @@ namespace AutoShare.Services
         private const string LatestInstallerUrl = "https://github.com/Grodrigues1998/AutoShare/releases/latest/download/AutoShareInstaller.exe";
         private const string LocalInstallerPath = "AutoShareInstaller.exe";
 
-        public static void CheckForUpdates(string currentVersion)
+        private static readonly HttpClient httpClient = new HttpClient
+        {
+            DefaultRequestHeaders = { { "User-Agent", "AutoShareApp" } }
+        };
+
+        public static async Task CheckForUpdatesAsync(string currentVersion)
         {
             try
             {
-                // Usa GitHub API para pegar release mais recente
-                using var client = new WebClient();
-                client.Headers.Add("User-Agent", "AutoShareApp");
+                // Pega release mais recente no GitHub
                 string apiUrl = "https://api.github.com/repos/Grodrigues1998/AutoShare/releases/latest";
 
-                string json = client.DownloadString(apiUrl);
-                var release = System.Text.Json.JsonDocument.Parse(json);
+                var version = httpClient.GetAsync(apiUrl).Result;
+                using var release = JsonDocument.Parse(version.Content.ReadAsStringAsync().Result);
+
                 string latestTag = release.RootElement.GetProperty("tag_name").GetString().Replace("v", "");
 
-                if (verificar(latestTag.Split("."), currentVersion.Split(".")))
+                if (Verificar(latestTag.Split("."), currentVersion.Split(".")))
                 {
                     DialogResult result = MessageBox.Show(
                         $"Uma nova versão do AutoShare está disponível!\n\n" +
@@ -32,11 +36,11 @@ namespace AutoShare.Services
                         "Atualização disponível",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Information
-                        );
+                    );
 
                     if (result == DialogResult.Yes)
                     {
-                        DownloadAndInstall();
+                        DownloadAndInstallAsync();
                     }
                 }
             }
@@ -47,7 +51,7 @@ namespace AutoShare.Services
             }
         }
 
-        private static bool verificar(string[] release, string[] currentVersion)
+        private static bool Verificar(string[] release, string[] currentVersion)
         {
             for (int i = 0; i < release.Length; i++)
             {
@@ -63,12 +67,25 @@ namespace AutoShare.Services
             return false;
         }
 
-        private static void DownloadAndInstall()
+        private static void DownloadAndInstallAsync()
         {
-            using var client = new WebClient();
-            client.DownloadFile(LatestInstallerUrl, LocalInstallerPath);
-            Process.Start(LocalInstallerPath);
-            System.Windows.Forms.Application.Exit();
+            using (var response = httpClient.GetAsync(LatestInstallerUrl, HttpCompletionOption.ResponseHeadersRead).Result)
+            {
+                response.EnsureSuccessStatusCode();
+
+                using var stream = response.Content.ReadAsStreamAsync().Result;
+                using var fileStream = new FileStream(LocalInstallerPath, FileMode.Create, FileAccess.Write, FileShare.None);
+
+                stream.CopyToAsync(fileStream).Wait();
+            }
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = LocalInstallerPath,
+                UseShellExecute = true
+            });
+
+            Application.Exit();
         }
     }
 }

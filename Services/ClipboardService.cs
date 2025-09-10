@@ -4,9 +4,9 @@ using System.Windows.Forms;
 
 namespace AutoShare.Services
 {
-    public class ClipboardService
+    public static class ClipboardService
     {
-        public string GetClipboardText()
+        public static string GetClipboardText()
         {
             string result = string.Empty;
             var staThread = new Thread(() =>
@@ -20,7 +20,7 @@ namespace AutoShare.Services
             return result;
         }
 
-        public void SetClipboardText(string text)
+        public static void SetClipboardText(string text)
         {
             var staThread = new Thread(() => Clipboard.SetText(text));
             staThread.SetApartmentState(ApartmentState.STA);
@@ -28,7 +28,7 @@ namespace AutoShare.Services
             staThread.Join();
         }
 
-        public void ClearClipboard()
+        public static void ClearClipboard()
         {
             var staThread = new Thread(() => Clipboard.Clear());
             staThread.SetApartmentState(ApartmentState.STA);

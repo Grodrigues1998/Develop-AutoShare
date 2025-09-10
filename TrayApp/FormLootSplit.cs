@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoShare.Services.TrayApp;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,10 +14,8 @@ namespace AutoShare
     public partial class FormLootSplit : Form
     {
         private List<(string Texto, string Comando)> pagamentos;
-        private readonly NotifyIcon TrayIcon;
-        public FormLootSplit(List<string> pagamentosLista, NotifyIcon trayIcon)
+        public FormLootSplit(List<string> pagamentosLista)
         {
-            TrayIcon = trayIcon;
             InitializeComponent();
             pagamentos = pagamentosLista
            .Select(p => (p.Split(':').First().Trim(), p.Split(':').Last().Trim())) // Texto antes e comando depois dos ":"
@@ -53,7 +52,7 @@ namespace AutoShare
                 {
                     var comando = pagamentos[e.RowIndex].Comando;
                     Clipboard.SetText(comando);
-                    TrayIcon.ShowBalloonTip(1000, "Transfer copiada", $"Transfer copiado para a área de transferência!", ToolTipIcon.Info);
+                    TrayAppService.TrayIcon.ShowBalloonTip(1000, "Transfer copiada", $"Transfer copiado para a área de transferência!", ToolTipIcon.Info);
                 }
             };
         }

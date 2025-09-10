@@ -1,39 +1,25 @@
-﻿using AutoShare.Models;
-using System;
-using System.Collections.Generic;
+﻿using AutoShare.Domain;
+using AutoShare.Models;
+using AutoShare.Services.TrayApp;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
-using System.Windows.Forms;
 
 namespace AutoShare.Services
 {
-    public class PartyHuntService
+    public static class PartyHuntService
     {
-        private readonly string pastaDestino;
-        private readonly NotifyIcon trayIcon;
-        private readonly ClipboardService clipboard;
-        public static List<string> UltimosPagamentos { get; private set; }
+        private static string pastaDestino = Path.Combine(Utils.MainFolder, "Historico Party Analyzer");
 
-        public PartyHuntService(string pastaDestino, NotifyIcon trayIcon, ClipboardService clipboard)
+        public static void Process(string texto)
         {
-            this.pastaDestino = pastaDestino;
-            this.trayIcon = trayIcon;
-            this.clipboard = clipboard;
-        }
-
-        public void Process(string texto)
-        {
+            Utils.VerificarECriarPasta(pastaDestino);
             var (players, data) = ParsePlayers(texto);
-            FileService.EnsureDirectoryExists(pastaDestino);
             SplitLoot(players);
-            clipboard.ClearClipboard();
-            trayIcon.ShowBalloonTip(5000, "Loot repartido", "Clique aqui para obter mais detalhes!", ToolTipIcon.Info);
+            ClipboardService.ClearClipboard();
+            TrayAppService.TrayIcon.ShowBalloonTip(5000, "Loot repartido", "Clique aqui para obter mais detalhes!", ToolTipIcon.Info);
             SaveHistory(texto, data);
         }
 
-        public (List<Player>, DateTime) ParsePlayers(string texto)
+        public static (List<Player>, DateTime) ParsePlayers(string texto)
         {
             var players = new List<Player>();
             var linhas = texto.Split("\r").Select(x => x.Trim()).ToList();
@@ -41,7 +27,7 @@ namespace AutoShare.Services
 
             string nome = "";
             int loot = 0, sup = 0;
-            DateTime data = ConverterParaDateTime(linhas.First().Split("From ")[1].Split(" to ")[0]);
+            DateTime data = Utils.ConverterParaDateTime(linhas.First().Split("From ")[1].Split(" to ")[0]);
             foreach (var linha in linhas.Skip(index + 1))
             {
                 if (!linha.Contains(":"))
@@ -58,21 +44,33 @@ namespace AutoShare.Services
             }
             return (players, data);
         }
-        public static DateTime ConverterParaDateTime(string dataTexto)
-        {
-            // Define o formato da data
-            string formato = "yyyy-MM-dd, HH:mm:ss";
-
-            // Faz o parse exato
-            return DateTime.ParseExact(dataTexto, formato, CultureInfo.InvariantCulture);
-        }
-        private void SaveHistory(string texto,DateTime data)
+       
+        private static void SaveHistory(string texto, DateTime data)
         {
             string caminhoArquivo = Path.Combine(pastaDestino, "PartyHunt");
             File.WriteAllText(caminhoArquivo + "-" + data.ToString("dd-MM-yyyyThh-mm-ss") + ".txt", texto);
         }
+        public static void MostrarUltimoPagamento()
+        {
+            Utils.VerificarECriarPasta(pastaDestino);
 
-        public List<string> SplitLoot(List<Player> players)
+            var arquivo = new DirectoryInfo(pastaDestino)
+                .GetFiles("*.txt")
+                .OrderByDescending(f => f.CreationTime)
+                .FirstOrDefault();
+
+            if (arquivo == null)
+            {
+                MessageBox.Show("Nenhum pagamento calculado ainda.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var (players, data) = ParsePlayers(File.ReadAllText(arquivo.FullName));
+            var formPagamentos = new FormLootSplit(SplitLoot(players));
+            formPagamentos.Show();
+        }
+
+        public static List<string> SplitLoot(List<Player> players)
         {
             long totalLoot = players.Sum(p => p.Loot);
             long totalSupplies = players.Sum(p => p.Supplies);
@@ -108,7 +106,6 @@ namespace AutoShare.Services
                     if (receivers[idxReceiver].Amount == 0) idxReceiver++;
                 }
             }
-            UltimosPagamentos = pagamentos;            
             return pagamentos;
         }
     }
