@@ -1,6 +1,7 @@
 ﻿using AutoShare.Domain;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +20,17 @@ namespace AutoShare.Services.TrayApp
                     var texto = ClipboardService.GetClipboardText();
                     if (!string.IsNullOrEmpty(texto) && texto.Contains("Session data: From"))
                     {
+                        var personagem = "";
+                        var processo = Process.GetProcesses().Where(x => x.ProcessName == "client").ToList();
+                        if (processo.Any())
+                        {
+                            personagem = processo.First().MainWindowTitle.Split("-")[2].Trim();
+                        }
+
                         if (texto.Contains("XP Gain: "))
-                            HuntAnalyzerService.Process(texto);
+                            HuntAnalyzerService.Process(texto, personagem);
                         else
-                            PartyHuntService.Process(texto);
+                            PartyHuntService.Process(texto, personagem);
                     }
                 }
                 catch
@@ -76,6 +84,6 @@ namespace AutoShare.Services.TrayApp
             Thread.Sleep(500);
             Application.Exit();
         }
-        
+
     }
 }

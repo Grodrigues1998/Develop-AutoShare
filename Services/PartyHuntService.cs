@@ -1,6 +1,7 @@
 ﻿using AutoShare.Domain;
 using AutoShare.Models;
 using AutoShare.Services.TrayApp;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace AutoShare.Services
@@ -9,47 +10,74 @@ namespace AutoShare.Services
     {
         private static string pastaDestino = Path.Combine(Utils.MainFolder, "Historico Party Analyzer");
 
-        public static void Process(string texto)
+        public static void Process(string texto, string personagem)
         {
             Utils.VerificarECriarPasta(pastaDestino);
-            var (players, data) = ParsePlayers(texto);
-            SplitLoot(players);
+
+            // Novo parser
+            var session = ParseSession(texto, personagem);
+
+            // Aqui você pode chamar o SplitLoot (se ainda precisar dele) passando os jogadores
+            SplitLoot(session.Jogadores);
+
             ClipboardService.ClearClipboard();
             TrayAppService.TrayIcon.ShowBalloonTip(5000, "Loot repartido", "Clique aqui para obter mais detalhes!", ToolTipIcon.Info);
-            SaveHistory(texto, data);
+
+            SaveHistory(texto, session.Inicio, personagem);
         }
 
-        public static (List<Player>, DateTime) ParsePlayers(string texto)
+        public static PartyHuntSession ParseSession(string texto, string personagem)
         {
-            var players = new List<Player>();
-            var linhas = texto.Split("\r").Select(x => x.Trim()).ToList();
-            int index = linhas.FindIndex(x => x.Contains("Balance: "));
+            var linhas = texto.Split("\n").Select(l => l.Trim()).Where(l => !string.IsNullOrEmpty(l)).ToList();
 
-            string nome = "";
-            int loot = 0, sup = 0;
-            DateTime data = Utils.ConverterParaDateTime(linhas.First().Split("From ")[1].Split(" to ")[0]);
-            foreach (var linha in linhas.Skip(index + 1))
+            var session = new PartyHuntSession();
+            session.MeuPersonagem = personagem;
+            // Sessão
+            var header = linhas[0]; // "Session data: From ... to ..."
+            session.Inicio = Utils.ConverterParaDateTime(header.Split("From ")[1].Split(" to ")[0]);
+            session.Fim = Utils.ConverterParaDateTime(header.Split(" to ")[1]);
+            session.Duracao = session.Fim - session.Inicio;
+
+            session.LootType = linhas.First(x => x.StartsWith("Loot Type:")).Replace("Loot Type:", "").Trim();
+            session.LootTotal = ExtrairValor(linhas.First(x => x.StartsWith("Loot:")), "Loot:");
+            session.SuppliesTotal = ExtrairValor(linhas.First(x => x.StartsWith("Supplies:")), "Supplies:");
+            session.BalanceTotal = ExtrairValor(linhas.First(x => x.StartsWith("Balance:")), "Balance:");
+
+            // Jogadores (a partir da linha 6 normalmente, mas vamos detectar pelo Balance geral)
+            int startIndex = linhas.FindIndex(l => l.StartsWith("Balance:")) + 1;
+
+            for (int i = startIndex; i < linhas.Count; i++)
             {
-                if (!linha.Contains(":"))
-                    nome = linha.Replace("(Leader)", "").Trim();
-
-                if (linha.Contains("Loot: "))
-                    loot = int.Parse(linha.Replace("Loot: ", "").Replace(",", "").Trim());
-
-                if (linha.Contains("Supplies: "))
+                if (!linhas[i].Contains(":"))
                 {
-                    sup = int.Parse(linha.Replace("Supplies: ", "").Replace(",", "").Trim());
-                    players.Add(new Player { Nome = nome, Loot = loot, Supplies = sup });
+                    var nome = linhas[i].Replace("(Leader)", "").Trim();
+                    bool isLeader = linhas[i].Contains("(Leader)");
+                    var player = new PartyPlayer { Nome = nome, IsLeader = isLeader };
+
+                    player.Loot = ExtrairValor(linhas[++i], "Loot:");
+                    player.Supplies = ExtrairValor(linhas[++i], "Supplies:");
+                    player.Balance = ExtrairValor(linhas[++i], "Balance:");
+                    player.Damage = ExtrairValor(linhas[++i], "Damage:");
+                    player.Healing = ExtrairValor(linhas[++i], "Healing:");
+
+                    session.Jogadores.Add(player);
                 }
             }
-            return (players, data);
+
+            return session;
         }
-       
-        private static void SaveHistory(string texto, DateTime data)
+
+        private static long ExtrairValor(string linha, string chave)
         {
-            string caminhoArquivo = Path.Combine(pastaDestino, "PartyHunt");
-            File.WriteAllText(caminhoArquivo + "-" + data.ToString("dd-MM-yyyyThh-mm-ss") + ".txt", texto);
+            return long.Parse(linha.Replace(chave, "").Replace(",", "").Trim());
         }
+
+        private static void SaveHistory(string texto, DateTime data, string personagem)
+        {
+            string caminhoArquivo = Path.Combine(pastaDestino, $"{personagem} - {data:dd-MM-yyyyTHH-mm-ss}.txt");
+            File.WriteAllText(caminhoArquivo, texto);
+        }
+
         public static void MostrarUltimoPagamento()
         {
             Utils.VerificarECriarPasta(pastaDestino);
@@ -65,12 +93,12 @@ namespace AutoShare.Services
                 return;
             }
 
-            var (players, data) = ParsePlayers(File.ReadAllText(arquivo.FullName));
-            var formPagamentos = new FormLootSplit(SplitLoot(players));
-            formPagamentos.Show();
+            var session = ParseSession(File.ReadAllText(arquivo.FullName), arquivo.FullName.Split("-")[0].Trim());
+            var formLootSplit = new FormLootSplit(session);
+            formLootSplit.Show();
         }
 
-        public static List<string> SplitLoot(List<Player> players)
+        public static List<string> SplitLoot(List<PartyPlayer> players)
         {
             long totalLoot = players.Sum(p => p.Loot);
             long totalSupplies = players.Sum(p => p.Supplies);

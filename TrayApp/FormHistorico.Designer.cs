@@ -2,7 +2,7 @@
 
 namespace AutoShare
 {
-    partial class FormLootSplit
+    partial class FormHistorico
     {
         /// <summary>
         /// Required designer variable.
@@ -30,73 +30,22 @@ namespace AutoShare
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLootSplit));
-            Divisao = new DataGridView();
-            Data = new Label();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormHistorico));
             Menu = new Panel();
             Estatisticas = new Button();
             Historico = new Button();
             Body = new Panel();
-            panel2 = new Panel();
             panel1 = new Panel();
-            Total = new Label();
-            ((System.ComponentModel.ISupportInitialize)Divisao).BeginInit();
+            checkedComboBox1 = new AutoShare.Components.CheckedComboBox();
+            dtFim = new DateTimePicker();
+            dtInicio = new DateTimePicker();
+            lblFim = new Label();
+            lblInicio = new Label();
+            lblPersonagem = new Label();
             Menu.SuspendLayout();
             Body.SuspendLayout();
-            panel2.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
-            // 
-            // Divisao
-            // 
-            Divisao.AllowUserToAddRows = false;
-            Divisao.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(249, 250, 251);
-            Divisao.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            Divisao.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            Divisao.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            Divisao.BackgroundColor = Color.FromArgb(244, 246, 248);
-            Divisao.BorderStyle = BorderStyle.None;
-            Divisao.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            Divisao.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(225, 228, 232);
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            dataGridViewCellStyle2.ForeColor = Color.FromArgb(47, 59, 82);
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            Divisao.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            Divisao.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = Color.White;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle3.ForeColor = Color.FromArgb(51, 51, 51);
-            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(214, 228, 255);
-            dataGridViewCellStyle3.SelectionForeColor = Color.FromArgb(47, 59, 82);
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            Divisao.DefaultCellStyle = dataGridViewCellStyle3;
-            Divisao.Dock = DockStyle.Fill;
-            Divisao.EnableHeadersVisualStyles = false;
-            Divisao.Location = new Point(0, 0);
-            Divisao.Margin = new Padding(0);
-            Divisao.Name = "Divisao";
-            Divisao.ReadOnly = true;
-            Divisao.RowHeadersVisible = false;
-            Divisao.Size = new Size(483, 319);
-            Divisao.TabIndex = 0;
-            // 
-            // Data
-            // 
-            Data.AutoSize = true;
-            Data.Location = new Point(11, 14);
-            Data.Name = "Data";
-            Data.Size = new Size(34, 15);
-            Data.TabIndex = 1;
-            Data.Text = "Data:";
             // 
             // Menu
             // 
@@ -148,7 +97,6 @@ namespace AutoShare
             // 
             // Body
             // 
-            Body.Controls.Add(panel2);
             Body.Controls.Add(panel1);
             Body.Dock = DockStyle.Fill;
             Body.Location = new Point(100, 0);
@@ -156,36 +104,72 @@ namespace AutoShare
             Body.Size = new Size(483, 361);
             Body.TabIndex = 3;
             // 
-            // panel2
-            // 
-            panel2.Controls.Add(Divisao);
-            panel2.Dock = DockStyle.Fill;
-            panel2.Location = new Point(0, 42);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(483, 319);
-            panel2.TabIndex = 2;
-            // 
             // panel1
             // 
             panel1.BackColor = Color.FromArgb(244, 246, 248);
-            panel1.Controls.Add(Total);
-            panel1.Controls.Add(Data);
+            panel1.Controls.Add(checkedComboBox1);
+            panel1.Controls.Add(dtFim);
+            panel1.Controls.Add(dtInicio);
+            panel1.Controls.Add(lblFim);
+            panel1.Controls.Add(lblInicio);
+            panel1.Controls.Add(lblPersonagem);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(483, 42);
+            panel1.Size = new Size(483, 327);
             panel1.TabIndex = 1;
             // 
-            // Total
+            // checkedComboBox1
             // 
-            Total.AutoSize = true;
-            Total.Location = new Point(286, 14);
-            Total.Name = "Total";
-            Total.Size = new Size(36, 15);
-            Total.TabIndex = 2;
-            Total.Text = "Total:";
+            checkedComboBox1.DrawMode = DrawMode.OwnerDrawFixed;
+            checkedComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            checkedComboBox1.Location = new Point(15, 30);
+            checkedComboBox1.Name = "checkedComboBox1";
+            checkedComboBox1.Size = new Size(199, 24);
+            checkedComboBox1.TabIndex = 7;
             // 
-            // FormLootSplit
+            // dtFim
+            // 
+            dtFim.Location = new Point(351, 30);
+            dtFim.Name = "dtFim";
+            dtFim.Size = new Size(125, 23);
+            dtFim.TabIndex = 4;
+            // 
+            // dtInicio
+            // 
+            dtInicio.Location = new Point(220, 30);
+            dtInicio.Name = "dtInicio";
+            dtInicio.Size = new Size(125, 23);
+            dtInicio.TabIndex = 3;
+            // 
+            // lblFim
+            // 
+            lblFim.AutoSize = true;
+            lblFim.Location = new Point(351, 10);
+            lblFim.Name = "lblFim";
+            lblFim.Size = new Size(27, 15);
+            lblFim.TabIndex = 2;
+            lblFim.Text = "Fim";
+            // 
+            // lblInicio
+            // 
+            lblInicio.AutoSize = true;
+            lblInicio.Location = new Point(220, 10);
+            lblInicio.Name = "lblInicio";
+            lblInicio.Size = new Size(36, 15);
+            lblInicio.TabIndex = 1;
+            lblInicio.Text = "Inicio";
+            // 
+            // lblPersonagem
+            // 
+            lblPersonagem.AutoSize = true;
+            lblPersonagem.Location = new Point(15, 10);
+            lblPersonagem.Name = "lblPersonagem";
+            lblPersonagem.Size = new Size(73, 15);
+            lblPersonagem.TabIndex = 0;
+            lblPersonagem.Text = "Personagem";
+            // 
+            // FormHistorico
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -195,27 +179,28 @@ namespace AutoShare
             Controls.Add(Menu);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Name = "FormLootSplit";
+            Name = "FormHistorico";
             Text = "FormAutoShare";
-            ((System.ComponentModel.ISupportInitialize)Divisao).EndInit();
             Menu.ResumeLayout(false);
             Body.ResumeLayout(false);
-            panel2.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
-
-        private DataGridView Divisao;
         private Label Data;
         private Panel Menu;
         private Panel Body;
         private Panel panel1;
         private Button Historico;
-        private Panel panel2;
         private Button Estatisticas;
         private Label Total;
+        private Label lblFim;
+        private Label lblInicio;
+        private Label lblPersonagem;
+        private DateTimePicker dtFim;
+        private DateTimePicker dtInicio;
+        private Components.CheckedComboBox checkedComboBox1;
     }
 }

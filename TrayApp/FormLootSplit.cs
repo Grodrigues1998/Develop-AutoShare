@@ -1,4 +1,6 @@
-﻿using AutoShare.Services.TrayApp;
+﻿using AutoShare.Models;
+using AutoShare.Services;
+using AutoShare.Services.TrayApp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,10 +16,12 @@ namespace AutoShare
     public partial class FormLootSplit : Form
     {
         private List<(string Texto, string Comando)> pagamentos;
-        public FormLootSplit(List<string> pagamentosLista)
+        private PartyHuntSession _session;
+        public FormLootSplit(PartyHuntSession session)
         {
             InitializeComponent();
-            pagamentos = pagamentosLista
+            _session = session;
+            pagamentos = PartyHuntService.SplitLoot(session.Jogadores)
            .Select(p => (p.Split(':').First().Trim(), p.Split(':').Last().Trim())) // Texto antes e comando depois dos ":"
            .ToList();
             CriarTabela();
@@ -26,7 +30,8 @@ namespace AutoShare
         private void CriarTabela()
         {
             var trayMenu = new ContextMenuStrip();
-
+            Data.Text = $"Data: {_session.Inicio.ToString()} até {_session.Fim.ToString()}";
+            Total.Text = $"Total: {_session.BalanceTotal}gps";
             Divisao.Columns.Add(new DataGridViewTextBoxColumn
             {
                 HeaderText = "Pagar",
