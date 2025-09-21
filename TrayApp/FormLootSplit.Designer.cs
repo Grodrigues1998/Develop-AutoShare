@@ -117,6 +117,7 @@ namespace AutoShare
             Estatisticas.FlatAppearance.MouseOverBackColor = Color.FromArgb(62, 74, 99);
             Estatisticas.FlatStyle = FlatStyle.Flat;
             Estatisticas.ForeColor = Color.White;
+            Estatisticas.Image = Properties.Resources.Estatistica;
             Estatisticas.ImageAlign = ContentAlignment.MiddleLeft;
             Estatisticas.Location = new Point(0, 50);
             Estatisticas.Margin = new Padding(0);
@@ -135,6 +136,7 @@ namespace AutoShare
             Historico.FlatAppearance.MouseOverBackColor = Color.FromArgb(62, 74, 99);
             Historico.FlatStyle = FlatStyle.Flat;
             Historico.ForeColor = Color.White;
+            Historico.Image = Properties.Resources.Historico;
             Historico.ImageAlign = ContentAlignment.MiddleLeft;
             Historico.Location = new Point(0, 0);
             Historico.Margin = new Padding(0);

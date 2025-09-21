@@ -16,7 +16,7 @@ namespace AutoShare
         public FormHistorico()
         {
             InitializeComponent();
-            var lista = new[] { "Artmaguinha", "Big Tunners", "Sunrise Bella" };
+            var lista = new[] { "Artmaguinha", "Big Tunners", "Sunrise Bella","Garabambo" };
             checkedComboBox1.AddItems(lista);
         }
     }

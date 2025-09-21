@@ -56,7 +56,7 @@ namespace AutoShare
             Menu.Location = new Point(0, 0);
             Menu.Margin = new Padding(0);
             Menu.Name = "Menu";
-            Menu.Size = new Size(100, 361);
+            Menu.Size = new Size(100, 494);
             Menu.TabIndex = 2;
             // 
             // Estatisticas
@@ -66,6 +66,7 @@ namespace AutoShare
             Estatisticas.FlatAppearance.MouseOverBackColor = Color.FromArgb(62, 74, 99);
             Estatisticas.FlatStyle = FlatStyle.Flat;
             Estatisticas.ForeColor = Color.White;
+            Estatisticas.Image = Properties.Resources.Estatistica;
             Estatisticas.ImageAlign = ContentAlignment.MiddleLeft;
             Estatisticas.Location = new Point(0, 50);
             Estatisticas.Margin = new Padding(0);
@@ -84,6 +85,7 @@ namespace AutoShare
             Historico.FlatAppearance.MouseOverBackColor = Color.FromArgb(62, 74, 99);
             Historico.FlatStyle = FlatStyle.Flat;
             Historico.ForeColor = Color.White;
+            Historico.Image = (Image)resources.GetObject("Historico.Image");
             Historico.ImageAlign = ContentAlignment.MiddleLeft;
             Historico.Location = new Point(0, 0);
             Historico.Margin = new Padding(0);
@@ -101,7 +103,7 @@ namespace AutoShare
             Body.Dock = DockStyle.Fill;
             Body.Location = new Point(100, 0);
             Body.Name = "Body";
-            Body.Size = new Size(483, 361);
+            Body.Size = new Size(654, 494);
             Body.TabIndex = 3;
             // 
             // panel1
@@ -116,7 +118,7 @@ namespace AutoShare
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(483, 327);
+            panel1.Size = new Size(654, 71);
             panel1.TabIndex = 1;
             // 
             // checkedComboBox1
@@ -130,17 +132,26 @@ namespace AutoShare
             // 
             // dtFim
             // 
+            dtFim.CustomFormat = "dd/MM/yyyy";
+            dtFim.Enabled = false;
+            dtFim.Format = DateTimePickerFormat.Custom;
             dtFim.Location = new Point(351, 30);
+            dtFim.MaxDate = new DateTime(2025, 9, 21, 0, 0, 0, 0);
             dtFim.Name = "dtFim";
             dtFim.Size = new Size(125, 23);
             dtFim.TabIndex = 4;
+            dtFim.Value = new DateTime(2025, 9, 21, 0, 0, 0, 0);
             // 
             // dtInicio
             // 
+            dtInicio.CustomFormat = "dd/MM/yyyy";
+            dtInicio.Format = DateTimePickerFormat.Custom;
             dtInicio.Location = new Point(220, 30);
+            dtInicio.MaxDate = new DateTime(2025, 9, 21, 0, 0, 0, 0);
             dtInicio.Name = "dtInicio";
             dtInicio.Size = new Size(125, 23);
             dtInicio.TabIndex = 3;
+            dtInicio.Value = new DateTime(2025, 9, 21, 0, 0, 0, 0);
             // 
             // lblFim
             // 
@@ -174,7 +185,7 @@ namespace AutoShare
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(583, 361);
+            ClientSize = new Size(754, 494);
             Controls.Add(Body);
             Controls.Add(Menu);
             FormBorderStyle = FormBorderStyle.FixedSingle;

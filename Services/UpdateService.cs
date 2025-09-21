@@ -1,91 +1,158 @@
-﻿using System.Diagnostics;
-using System.Net;
+﻿using AutoShare.Properties;
+using System.Diagnostics;
 using System.Text.Json;
 
-namespace AutoShare.Services
+public static class UpdateService
 {
-    public static class UpdateService
+    private const string LatestInstallerUrl = "https://github.com/Grodrigues1998/AutoShare/releases/latest/download/AutoShareInstaller.exe";
+    private const string LocalInstallerPath = "AutoShareInstaller.exe";
+    
+
+    private static readonly HttpClient httpClient = new HttpClient
     {
-        private const string LatestInstallerUrl = "https://github.com/Grodrigues1998/AutoShare/releases/latest/download/AutoShareInstaller.exe";
-        private const string LocalInstallerPath = "AutoShareInstaller.exe";
+        DefaultRequestHeaders = { { "User-Agent", "AutoShareApp" } }
+    };
 
-        private static readonly HttpClient httpClient = new HttpClient
-        {
-            DefaultRequestHeaders = { { "User-Agent", "AutoShareApp" } }
-        };
+    private static System.Threading.Timer? timer;
 
-        public static void CheckForUpdatesAsync(string currentVersion)
+    /// <summary>
+    /// Inicia verificação automática de atualização a cada 10 minutos.
+    /// </summary>
+    public static void StartAutoUpdateCheck()
+    {
+        var currentVersion = Application.ProductVersion.Split("+")[0];
+        if (Settings.Default.DisableUpdates) // substituto do Properties.Settings
+            return;
+
+        // Checa imediatamente de forma silenciosa
+        Task.Run(() => CheckForUpdatesInternal(currentVersion, silent: true));
+
+        // Agenda para rodar a cada 10 minutos
+        timer = new System.Threading.Timer(_ =>
         {
-            try
+            CheckForUpdatesInternal(currentVersion, silent: true);
+        }, null, TimeSpan.FromMinutes(10), TimeSpan.FromMinutes(10));
+    }
+
+    /// <summary>
+    /// Verificação manual — chamada pelo usuário.
+    /// </summary>
+    public static void CheckForUpdatesManually()
+    {
+        var currentVersion = Application.ProductVersion.Split("+")[0];
+        CheckForUpdatesInternal(currentVersion, silent: false);
+    }
+
+    /// <summary>
+    /// Lógica central de verificação de atualização.
+    /// </summary>
+    private static void CheckForUpdatesInternal(string currentVersion, bool silent)
+    {
+        try
+        {
+            if (silent && Settings.Default.DisableUpdates)
+                return;
+
+            string apiUrl = "https://api.github.com/repos/Grodrigues1998/AutoShare/releases/latest";
+            var response = httpClient.GetAsync(apiUrl).Result;
+
+            if (!response.IsSuccessStatusCode)
             {
-                // Pega release mais recente no GitHub
-                string apiUrl = "https://api.github.com/repos/Grodrigues1998/AutoShare/releases/latest";
-
-                var version = httpClient.GetAsync(apiUrl).Result;
-                using var release = JsonDocument.Parse(version.Content.ReadAsStringAsync().Result);
-
-                string latestTag = release.RootElement.GetProperty("tag_name").GetString().Replace("v", "");
-
-                if (Verificar(latestTag.Split("."), currentVersion.Split(".")))
+                if (!silent)
                 {
-                    DialogResult result = MessageBox.Show(
-                        $"Uma nova versão do AutoShare está disponível!\n\n" +
-                        $"Versão atual: {currentVersion}\n" +
-                        $"Nova versão: {latestTag}\n\n" +
-                        $"Deseja atualizar agora?",
-                        "Atualização disponível",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Information
+                    MessageBox.Show(
+                        "Não foi possível verificar atualizações no momento.",
+                        "AutoShare",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
                     );
+                }
+                return;
+            }
 
-                    if (result == DialogResult.Yes)
-                    {
-                        DownloadAndInstallAsync();
-                    }
+            using var release = JsonDocument.Parse(response.Content.ReadAsStringAsync().Result);
+            string latestTag = release.RootElement.GetProperty("tag_name").GetString()?.Replace("v", "") ?? "";
+
+            if (Verificar(latestTag.Split("."), currentVersion.Split(".")))
+            {
+                DialogResult result = MessageBox.Show(
+                    $"Uma nova versão do AutoShare está disponível!\n\n" +
+                    $"Versão atual: {currentVersion}\n" +
+                    $"Nova versão: {latestTag}\n\n" +
+                    $"Deseja atualizar agora?",
+                    "Atualização disponível",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Information
+                );
+
+                if (result == DialogResult.Yes)
+                {
+                    DownloadAndInstallAsync();
+                }
+                else if (silent)
+                {
+                    // Só grava recusa no modo automático
+                    Settings.Default.DisableUpdates = true;
+                    Settings.Default.Save();
+                    timer?.Dispose();
+                    timer = null;
                 }
             }
-            catch (Exception ex)
+            else if (!silent)
             {
-                MessageBox.Show("Erro ao verificar atualizações: " + ex.Message,
-                    "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    $"Você já está usando a versão mais recente ({currentVersion}).",
+                    "AutoShare",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
             }
         }
-
-        private static bool Verificar(string[] release, string[] currentVersion)
+        catch (Exception ex)
         {
-            for (int i = 0; i < release.Length; i++)
+            if (!silent)
             {
-                int prim = int.Parse(release[i]);
-                int sec = int.Parse(currentVersion[i]);
-                if (prim == sec)
-                    continue;
-                if (prim > sec)
-                    return true;
-                if (prim < sec)
-                    return false;
+                MessageBox.Show(
+                    $"Erro ao verificar atualizações:\n{ex.Message}",
+                    "AutoShare",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
-            return false;
         }
+    }
 
-        private static void DownloadAndInstallAsync()
+    private static bool Verificar(string[] release, string[] currentVersion)
+    {
+        for (int i = 0; i < release.Length; i++)
         {
-            using (var response = httpClient.GetAsync(LatestInstallerUrl, HttpCompletionOption.ResponseHeadersRead).Result)
-            {
-                response.EnsureSuccessStatusCode();
-
-                using var stream = response.Content.ReadAsStreamAsync().Result;
-                using var fileStream = new FileStream(LocalInstallerPath, FileMode.Create, FileAccess.Write, FileShare.None);
-
-                stream.CopyToAsync(fileStream).Wait();
-            }
-
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = LocalInstallerPath,
-                UseShellExecute = true
-            });
-
-            Application.Exit();
+            int prim = int.Parse(release[i]);
+            int sec = int.Parse(currentVersion[i]);
+            if (prim == sec) continue;
+            if (prim > sec) return true;
+            if (prim < sec) return false;
         }
+        return false;
+    }
+
+    private static void DownloadAndInstallAsync()
+    {
+        using (var response = httpClient.GetAsync(LatestInstallerUrl, HttpCompletionOption.ResponseHeadersRead).Result)
+        {
+            response.EnsureSuccessStatusCode();
+
+            using var stream = response.Content.ReadAsStreamAsync().Result;
+            using var fileStream = new FileStream(LocalInstallerPath, FileMode.Create, FileAccess.Write, FileShare.None);
+
+            stream.CopyToAsync(fileStream).Wait();
+        }
+
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = LocalInstallerPath,
+            UseShellExecute = true
+        });
+
+        Application.Exit();
     }
 }

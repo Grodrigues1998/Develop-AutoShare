@@ -118,6 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="Historico.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAEFSURBVEhL7ZQxDsIwDEU7MjIyMnIsjsDGyBE4BiNjR47QkdFqXImRsSPIKKnc3zS/Emuf5CH9
+        znfiNKmqlX8RkU3XdTdV/UDUIrLD/CJpshu/MsYY77FLgTTJVu1NQghXzG3b9uRzRGSPORMyq3tiDqKq
+        j5SP2gQwb+b0zPdUpNyuzA5Ghjj2JE1EtqgNoDEa4tijqueo16gtplTAYDqFGTCdoqp9NOlRM2gBmkCK
+        0Pn2a8akC2qeXJEQwjF+mz9ke1voKiJmbrfZjX/z6Ptkl4WuBHA7L180A94hWsSZ010P+FZZWH8xx/U8
+        tWb+BueIO0mHWQrelhIicvAvpos7PdCVJXwBtKsPGItD0OIAAAAASUVORK5CYII=
+</value>
+  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAYAAAAAAAEAIAD87AAAZgAAAICAAAABACAAKAgBAGLtAABAQAAAAQAgAChCAACK9QEAMDAAAAEA

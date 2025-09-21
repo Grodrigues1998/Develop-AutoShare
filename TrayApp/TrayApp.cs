@@ -13,7 +13,7 @@ namespace AutoShareTray
         public TrayApp()
         {
 
-            UpdateService.CheckForUpdatesAsync(Application.ProductVersion.Split("+")[0]);
+            UpdateService.StartAutoUpdateCheck();
 
             TrayAppService.TrayIcon.ShowBalloonTip(1000, "AutoShare iniciado", "Monitorando área de transferência.", ToolTipIcon.Info);
             var historico = new FormHistorico();

@@ -49,6 +49,7 @@ namespace AutoShare.Services.TrayApp
             {
                 new ToolStripMenuItem("Loot Split", null, OnLootSplit),
                 new ToolStripMenuItem("Histórico", null, OnHistorico),
+                new ToolStripMenuItem("Verificar Atualizações", null, OnAtualizacao),
                 new ToolStripMenuItem("Sair", null, OnExit)
             });
 
@@ -83,6 +84,10 @@ namespace AutoShare.Services.TrayApp
             TrayIcon.Visible = false;
             Thread.Sleep(500);
             Application.Exit();
+        }
+        private static void OnAtualizacao(object sender, EventArgs e)
+        {
+            UpdateService.CheckForUpdatesManually();
         }
 
     }

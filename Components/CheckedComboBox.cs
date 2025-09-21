@@ -43,7 +43,7 @@ namespace AutoShare.Components
         /// <summary>
         /// Texto concatenado com todos os itens selecionados.
         /// </summary>
-        public string DisplayText => string.Join(", ", CheckedItems);
+        public string DisplayText => string.Join(", ", CheckedItems.Sum(x => x.Length) > 20 ? [$"{CheckedItems.Count} Pesonagens Selecionados"] : CheckedItems);
 
         protected override void OnDrawItem(DrawItemEventArgs e)
         {
@@ -90,11 +90,17 @@ namespace AutoShare.Components
         }
 
         /// <summary>
-        /// Impede setas ↑ e ↓ de moverem o item selecionado quando fechado.
+        /// Impede direcionais moverem o item selecionado.
         /// </summary>
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (!DroppedDown && (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down))
+            List<Keys> blacklist = new List<Keys>() {
+                Keys.Up,
+                Keys.Down,
+                Keys.Left,
+                Keys.Right,
+            };
+            if (blacklist.Contains(e.KeyCode))
             {
                 e.Handled = true; // cancela navegação
                 return;
